@@ -1,0 +1,27 @@
+{
+  "name": "sryn-platform",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SRYN Management Pvt. Ltd. Multi-Business Platform Monorepo",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "typecheck": "turbo typecheck",
+    "lint": "turbo lint",
+    "clean": "turbo clean && rimraf node_modules .turbo"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.0",
+    "typescript": "^5.7.2",
+    "prettier": "^3.4.2",
+    "rimraf": "^6.0.1"
+  },
+  "packageManager": "npm@10.8.2",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

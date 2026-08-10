@@ -1,0 +1,36 @@
+{
+  "name": "@sryn/master-admin",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3004",
+    "build": "next build",
+    "start": "next start -p 3004",
+    "typecheck": "tsc --noEmit",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@sryn/analytics": "*",
+    "@sryn/auth": "*",
+    "@sryn/config": "*",
+    "@sryn/crm": "*",
+    "@sryn/database": "*",
+    "@sryn/notifications": "*",
+    "@sryn/storage": "*",
+    "@sryn/ui": "*",
+    "lucide-react": "^0.474.0",
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^2.15.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
+  }
+}

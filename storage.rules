@@ -1,0 +1,53 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isMaxFileSize(maxBytes) {
+      return request.resource.size <= maxBytes;
+    }
+
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // Public Media, Blog & Portfolio uploads
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAuthenticated() && isMaxFileSize(10 * 1024 * 1024); // 10MB limit
+    }
+
+    // Private Candidate Resumes & Documents
+    match /private/candidates/{candidateId}/{fileName} {
+      allow read: if isOwner(candidateId) || isAuthenticated();
+      allow write: if isOwner(candidateId) && isMaxFileSize(10 * 1024 * 1024); // 10MB max PDF/Doc
+    }
+    match /private/recruitment/candidates/{candidateId}/resumes/{resumeId} {
+      allow read: if isOwner(candidateId) || isAuthenticated();
+      allow write: if isOwner(candidateId) && isMaxFileSize(10 * 1024 * 1024);
+    }
+
+    // Private Sensitive Finance Documents
+    match /private/finance/{leadId}/{fileName} {
+      allow read, write: if isAuthenticated() && isMaxFileSize(10 * 1024 * 1024);
+    }
+    match /private/finserv/applications/{applicationId}/documents/{documentId} {
+      allow read, write: if isAuthenticated() && isMaxFileSize(10 * 1024 * 1024);
+    }
+
+    // Private Technology Project Documents
+    match /private/projects/{projectId}/{fileName} {
+      allow read, write: if isAuthenticated() && isMaxFileSize(25 * 1024 * 1024);
+    }
+  }
+}

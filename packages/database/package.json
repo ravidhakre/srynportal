@@ -1,0 +1,26 @@
+{
+  "name": "@sryn/database",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./firebase/auth": "./src/firebase/auth.ts",
+    "./firebase/client": "./src/firebase/client.ts",
+    "./firebase/firestore": "./src/firebase/firestore.ts",
+    "./firebase/storage": "./src/firebase/storage.ts",
+    "./firebase/admin": "./src/firebase/admin.ts",
+    "./context/auth-context": "./src/context/auth-context.tsx",
+    "./types": "./src/types/index.ts"
+  },
+  "dependencies": {
+    "@sryn/auth": "*",
+    "@sryn/config": "*",
+    "firebase": "^11.3.0",
+    "firebase-admin": "^13.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

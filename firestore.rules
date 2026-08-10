@@ -1,0 +1,235 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'SUPER_ADMIN' ||
+        getUserData().role == 'SUPER_ADMIN'
+      );
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function hasVerticalAccess(vertical) {
+      return isSuperAdmin() || (
+        isAuthenticated() && (
+          request.auth.token.businessVertical == vertical ||
+          getUserData().businessVertical == vertical
+        )
+      );
+    }
+
+    // Default deny all access unless explicitly permitted below
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // User Profiles (/users)
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isSuperAdmin() || getUserData().role == 'BUSINESS_ADMIN');
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (isOwner(userId) || isSuperAdmin());
+      allow delete: if isSuperAdmin();
+    }
+
+    // CMS Public Content
+    match /pages/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin() || (isAuthenticated() && (getUserData().role == 'CONTENT_MANAGER' || getUserData().role == 'BUSINESS_ADMIN'));
+    }
+    match /services/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin() || (isAuthenticated() && (getUserData().role == 'CONTENT_MANAGER' || getUserData().role == 'BUSINESS_ADMIN'));
+    }
+    match /blogs/{docId} {
+      allow read: if resource.data.isPublished == true || isAuthenticated();
+      allow write: if isSuperAdmin() || (isAuthenticated() && (getUserData().role == 'CONTENT_MANAGER' || getUserData().role == 'BUSINESS_ADMIN'));
+    }
+    match /faqs/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin() || (isAuthenticated() && (getUserData().role == 'CONTENT_MANAGER' || getUserData().role == 'BUSINESS_ADMIN'));
+    }
+    match /testimonials/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin() || (isAuthenticated() && (getUserData().role == 'CONTENT_MANAGER' || getUserData().role == 'BUSINESS_ADMIN'));
+    }
+    match /media/{docId} {
+      allow read: if resource.data.isPublic == true || isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    // Contact Submissions
+    match /contactSubmissions/{submissionId} {
+      allow create: if true; // Public contact form submission
+      allow read, update, delete: if isSuperAdmin() || hasVerticalAccess(resource.data.businessVertical);
+    }
+
+    // CRM Leads
+    match /leads/{leadId} {
+      allow create: if true; // Web leads
+      allow read, update: if isSuperAdmin() || hasVerticalAccess(resource.data.businessVertical);
+      allow delete: if isSuperAdmin();
+    }
+
+    // SRYN Technology
+    match /technologyLeads/{leadId} {
+      allow create: if true;
+      allow read, update: if isSuperAdmin() || hasVerticalAccess('TECHNOLOGY');
+      allow delete: if isSuperAdmin();
+    }
+    match /technologyProjects/{projectId} {
+      allow read, write: if isSuperAdmin() || hasVerticalAccess('TECHNOLOGY') || isOwner(resource.data.clientUid);
+    }
+    match /technologyTasks/{taskId} {
+      allow read, write: if isSuperAdmin() || hasVerticalAccess('TECHNOLOGY');
+    }
+    match /technologyClients/{clientId} {
+      allow read, write: if isSuperAdmin() || hasVerticalAccess('TECHNOLOGY');
+    }
+    match /technologyQuotes/{quoteId} {
+      allow read: if true; // Public token view allowed
+      allow write: if isSuperAdmin() || hasVerticalAccess('TECHNOLOGY') || true; // Public acceptance allowed
+    }
+    match /technologyServices/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin() || hasVerticalAccess('TECHNOLOGY');
+    }
+    match /technologyPortfolio/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin() || hasVerticalAccess('TECHNOLOGY');
+    }
+
+    // SRYN FinServ
+    match /financeLeads/{leadId} {
+      allow create: if true;
+      allow read, update: if isSuperAdmin() || hasVerticalAccess('FINSERV');
+      allow delete: if isSuperAdmin();
+    }
+    match /loanApplications/{appId} {
+      allow read, update: if isSuperAdmin() || hasVerticalAccess('FINSERV') || isOwner(resource.data.applicantEmail);
+      allow delete: if isSuperAdmin();
+    }
+    match /financeDocuments/{docId} {
+      allow read, write: if isSuperAdmin() || hasVerticalAccess('FINSERV') || isOwner(resource.data.uploadedBy);
+    }
+    match /financeProducts/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin() || hasVerticalAccess('FINSERV');
+    }
+    match /financeCustomers/{customerId} {
+      allow read, write: if isSuperAdmin() || hasVerticalAccess('FINSERV');
+    }
+
+    // SRYN Recruitment
+    match /jobs/{jobId} {
+      allow read: if resource.data.status == 'PUBLISHED' || isSuperAdmin() || hasVerticalAccess('RECRUITMENT') || isOwner(resource.data.employerUid);
+      allow create, update: if isSuperAdmin() || hasVerticalAccess('RECRUITMENT') || (isAuthenticated() && getUserData().role == 'EMPLOYER');
+      allow delete: if isSuperAdmin();
+    }
+    match /jobApplications/{appId} {
+      allow create: if isAuthenticated() && isOwner(request.resource.data.candidateUid);
+      allow read: if isSuperAdmin() || hasVerticalAccess('RECRUITMENT') || isOwner(resource.data.candidateUid) || isOwner(resource.data.employerUid);
+      allow update: if isSuperAdmin() || hasVerticalAccess('RECRUITMENT') || isOwner(resource.data.employerUid);
+    }
+    match /candidates/{candidateId} {
+      allow read: if isOwner(candidateId) || isSuperAdmin() || hasVerticalAccess('RECRUITMENT');
+      allow write: if isOwner(candidateId) || isSuperAdmin() || hasVerticalAccess('RECRUITMENT');
+    }
+    match /candidateProfiles/{candidateUid} {
+      allow read: if isOwner(candidateUid) || isSuperAdmin() || hasVerticalAccess('RECRUITMENT');
+      allow write: if isOwner(candidateUid) || isSuperAdmin();
+    }
+    match /employers/{employerUid} {
+      allow read: if true;
+      allow write: if isOwner(employerUid) || isSuperAdmin() || hasVerticalAccess('RECRUITMENT');
+    }
+    match /employerProfiles/{employerUid} {
+      allow read: if true;
+      allow write: if isOwner(employerUid) || isSuperAdmin() || hasVerticalAccess('RECRUITMENT');
+    }
+    match /interviews/{interviewId} {
+      allow read, write: if isSuperAdmin() || hasVerticalAccess('RECRUITMENT') || isOwner(resource.data.candidateUid) || isOwner(resource.data.employerUid);
+    }
+    match /placements/{placementId} {
+      allow read, write: if isSuperAdmin() || hasVerticalAccess('RECRUITMENT');
+    }
+    match /staffingRequirements/{reqId} {
+      allow read, write: if isSuperAdmin() || hasVerticalAccess('RECRUITMENT');
+    }
+    match /candidateSubmissions/{subId} {
+      allow read, write: if isSuperAdmin() || hasVerticalAccess('RECRUITMENT') || isOwner(resource.data.employerId);
+    }
+    match /recruitmentEmployerLeads/{leadId} {
+      allow read, write: if isSuperAdmin() || hasVerticalAccess('RECRUITMENT');
+    }
+
+    // Phase 9 Automation & Finance Collections
+    match /systemEvents/{eventId} {
+      allow read, write: if isAuthenticated();
+    }
+    match /notificationPreferences/{userId} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+    }
+    match /emailQueue/{emailId} {
+      allow read, write: if isAuthenticated();
+    }
+    match /emailTemplates/{templateId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+    match /whatsappQueue/{msgId} {
+      allow read, write: if isAuthenticated();
+    }
+    match /smsQueue/{msgId} {
+      allow read, write: if isAuthenticated();
+    }
+    match /communicationLogs/{logId} {
+      allow read, write: if isAuthenticated();
+    }
+    match /invoices/{invoiceId} {
+      allow read, write: if isSuperAdmin() || isAuthenticated();
+    }
+    match /payments/{paymentId} {
+      allow read, write: if isSuperAdmin() || isAuthenticated();
+    }
+    match /automationRules/{ruleId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+    match /automationRuns/{runId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+    match /systemErrors/{errorId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Notifications & Audit Logs & System Settings
+    match /notifications/{notificationId} {
+      allow read, update: if isAuthenticated() && isOwner(resource.data.userId);
+      allow create: if isAuthenticated();
+      allow delete: if isOwner(resource.data.userId) || isSuperAdmin();
+    }
+    match /auditLogs/{logId} {
+      allow read: if isSuperAdmin();
+      allow create: if isAuthenticated();
+    }
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin();
+    }
+  }
+}
