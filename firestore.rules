@@ -23,6 +23,13 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == uid;
     }
 
+    function isEmailOwner(email) {
+      return isAuthenticated() && (
+        request.auth.token.email == email ||
+        getUserData().email == email
+      );
+    }
+
     function hasVerticalAccess(vertical) {
       return isSuperAdmin() || (
         isAuthenticated() && (
@@ -30,11 +37,6 @@ service cloud.firestore {
           getUserData().businessVertical == vertical
         )
       );
-    }
-
-    // Default deny all access unless explicitly permitted below
-    match /{document=**} {
-      allow read, write: if false;
     }
 
     // User Profiles (/users)
@@ -119,7 +121,7 @@ service cloud.firestore {
       allow delete: if isSuperAdmin();
     }
     match /loanApplications/{appId} {
-      allow read, update: if isSuperAdmin() || hasVerticalAccess('FINSERV') || isOwner(resource.data.applicantEmail);
+      allow read, update: if isSuperAdmin() || hasVerticalAccess('FINSERV') || isEmailOwner(resource.data.applicantEmail);
       allow delete: if isSuperAdmin();
     }
     match /financeDocuments/{docId} {
