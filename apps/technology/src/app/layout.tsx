@@ -31,10 +31,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-slate-950 text-slate-100 antialiased flex flex-col min-h-screen">
+    <html lang="en">
+      <body className="bg-white text-slate-900 antialiased flex flex-col min-h-screen">
         <TechnologyHeader />
-        <div className="flex-1 pt-24">{children}</div>
+        <div className="flex-1 pt-20">{children}</div>
         <TechnologyFooter />
       </body>
     </html>

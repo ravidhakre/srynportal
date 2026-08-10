@@ -1,14 +1,15 @@
 import Link from "next/link";
-import { Button, Card, Badge } from "@sryn/ui";
+import { Button, Badge, HeroSlider, type SlideData } from "@sryn/ui";
 import { collection, getDocs, query, where, limit as limitFn, getFirebaseDb, COLLECTIONS, type JobPostingDocument } from "@sryn/database";
 import { JobCard } from "../components/job-card";
 import {
-  Users,
   Search,
   Briefcase,
   MapPin,
-  Layers,
-  Award,
+  ArrowRight,
+  CheckCircle2,
+  Building2,
+  UserCheck,
 } from "lucide-react";
 
 async function getFeaturedJobs(): Promise<JobPostingDocument[]> {
@@ -32,181 +33,227 @@ async function getFeaturedJobs(): Promise<JobPostingDocument[]> {
 export default async function RecruitmentHomePage() {
   const jobs = await getFeaturedJobs();
 
+  const recSlides: SlideData[] = [
+    {
+      id: 1,
+      image: "/images/hero_1.jpg",
+      badgeText: "SRYN RECRUITMENT & TALENT SOLUTIONS",
+      badgeBorderClass: "border-emerald-500/60",
+      badgeTextClass: "text-emerald-400",
+      title: "Find Talent.",
+      highlightText: "Build Better Teams.",
+      titleEnd: "Shape Careers.",
+      description:
+        "Connecting top employers with vetted candidates across IT, Non-IT, staffing, executive search, and specialized corporate roles.",
+      primaryCtaText: "Explore Open Jobs",
+      primaryCtaHref: "/jobs",
+      secondaryCtaText: "Hire Talent",
+      secondaryCtaHref: "/hire-talent",
+      buttonVariant: "recruitment",
+      accentGlowClass: "bg-emerald-500/20",
+    },
+    {
+      id: 2,
+      image: "/images/hero_2.jpg",
+      badgeText: "IT & NON-IT STAFFING",
+      badgeBorderClass: "border-teal-400/60",
+      badgeTextClass: "text-teal-300",
+      title: "Specialized Hiring.",
+      highlightText: "Vetted Candidates.",
+      titleEnd: "Fast Onboarding.",
+      description:
+        "Custom recruitment strategies for startups, growing SMEs, and enterprise corporations seeking qualified manpower.",
+      primaryCtaText: "Post a Requirement",
+      primaryCtaHref: "/hire-talent",
+      secondaryCtaText: "For Employers",
+      secondaryCtaHref: "/employer",
+      buttonVariant: "primary",
+      accentGlowClass: "bg-teal-500/20",
+    },
+    {
+      id: 3,
+      image: "/images/hero_3.jpg",
+      badgeText: "CANDIDATE CAREER ADVANCEMENT",
+      badgeBorderClass: "border-cyan-400/60",
+      badgeTextClass: "text-cyan-300",
+      title: "Accelerate Your",
+      highlightText: "Career Path.",
+      titleEnd: "Direct Placement.",
+      description:
+        "Upload your resume, search verified job opportunities, and connect directly with hiring managers across top industries.",
+      primaryCtaText: "Submit Resume",
+      primaryCtaHref: "/candidate",
+      secondaryCtaText: "Search Jobs",
+      secondaryCtaHref: "/jobs",
+      buttonVariant: "recruitment",
+      accentGlowClass: "bg-cyan-500/20",
+    },
+  ];
+
   return (
-    <main className="space-y-24 pb-24 text-left">
-      {/* 2. HERO & JOB SEARCH HERO */}
-      <section className="relative overflow-hidden pt-8 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="space-y-8 text-center max-w-4xl mx-auto">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-emerald-500/40 text-xs font-bold text-emerald-400 uppercase tracking-widest">
-            <span>SRYN RECRUITMENT</span>
+    <main className="space-y-20 pb-24 text-slate-900 bg-white">
+      {/* 1. HERO SLIDER SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 space-y-8">
+        <HeroSlider slides={recSlides} />
+
+        {/* PROMINENT JOB SEARCH OVERLAY CARD */}
+        <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 shadow-xl text-left max-w-5xl mx-auto">
+          <form action="/jobs" method="GET" className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="relative sm:col-span-2">
+              <Search className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" />
+              <input
+                name="q"
+                placeholder="Job title, skills, or keywords..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+
+            <div className="relative">
+              <MapPin className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" />
+              <input
+                name="location"
+                placeholder="Location (e.g. Noida, Remote)"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+
+            <Button type="submit" variant="recruitment" size="md" className="w-full font-bold shadow-md">
+              <Search className="w-4 h-4 mr-2" />
+              <span>Search Jobs</span>
+            </Button>
+          </form>
+        </div>
+      </section>
+
+      {/* 2. RECRUITMENT METRICS */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-md hover:shadow-xl transition-all border-l-4 border-l-emerald-500">
+            <div className="text-3xl font-black text-slate-900">IT & Non-IT</div>
+            <div className="text-sm font-bold text-emerald-600 uppercase tracking-wider mt-1">Sectors</div>
+            <div className="text-xs text-slate-500 mt-1">Technical & Operational Roles</div>
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl leading-[1.1]">
-            Find Talent. Find Opportunities. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
-              Build Better Teams.
-            </span>
-          </h1>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Connecting employers with relevant talent across IT, Non-IT, staffing and specialized recruitment requirements.
-          </p>
+          <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-md hover:shadow-xl transition-all border-l-4 border-l-teal-500">
+            <div className="text-3xl font-black text-slate-900">Vetted</div>
+            <div className="text-sm font-bold text-teal-600 uppercase tracking-wider mt-1">Talent Pool</div>
+            <div className="text-xs text-slate-500 mt-1">Screened Professionals</div>
+          </div>
+          <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-md hover:shadow-xl transition-all border-l-4 border-l-cyan-500">
+            <div className="text-3xl font-black text-slate-900">Direct</div>
+            <div className="text-sm font-bold text-cyan-600 uppercase tracking-wider mt-1">Placements</div>
+            <div className="text-xs text-slate-500 mt-1">Full-time & Contract Hiring</div>
+          </div>
+          <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 shadow-md hover:shadow-xl transition-all border-l-4 border-l-sryn-blue">
+            <div className="text-3xl font-black text-slate-900">Pan-India</div>
+            <div className="text-sm font-bold text-sryn-blue uppercase tracking-wider mt-1">Network</div>
+            <div className="text-xs text-slate-500 mt-1">Multiple Cities & Remote</div>
+          </div>
+        </div>
+      </section>
 
-          {/* Prominent Search Interface */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4 text-left">
-            <form action="/jobs" method="GET" className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-              <div className="relative sm:col-span-2">
-                <Search className="w-4 h-4 absolute left-3 top-3.5 text-slate-400" />
-                <input
-                  name="q"
-                  placeholder="Job title, skills, or keywords..."
-                  className="w-full h-11 pl-9 pr-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
+      {/* 3. DUAL CTAs (FOR CANDIDATES & FOR EMPLOYERS) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* For Candidates */}
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 shadow-lg space-y-6 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="p-3.5 rounded-2xl bg-emerald-500/15 text-emerald-600 w-fit">
+                <UserCheck className="w-8 h-8" />
               </div>
-              <div className="relative">
-                <MapPin className="w-4 h-4 absolute left-3 top-3.5 text-slate-400" />
-                <input
-                  name="location"
-                  placeholder="Location / City..."
-                  className="w-full h-11 pl-9 pr-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
-              <Button type="submit" size="lg" className="w-full h-11 bg-emerald-600 hover:bg-emerald-500 font-semibold shadow-lg shadow-emerald-600/20 text-white">
-                <Search className="w-4 h-4 mr-1.5" /> Search Jobs
-              </Button>
-            </form>
+              <h3 className="text-2xl font-bold text-slate-900">For Job Seekers</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Looking for your next career step? Create your candidate profile, browse verified job listings, and apply directly.
+              </p>
+              <ul className="space-y-2 text-sm text-slate-700">
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Free Profile Creation</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Verified Corporate Employers</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <Link href="/candidate">
+                <Button variant="recruitment" size="lg" className="w-full font-bold shadow-md">
+                  <span>Register as Candidate</span>
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </div>
 
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs text-slate-400 border-t border-slate-800/80">
-              <span className="font-semibold text-slate-300">Popular Categories:</span>
-              {["React Developer", "Java Engineer", "Sales Executive", "HR Specialist", "Accountant"].map((tag, idx) => (
-                <Link key={idx} href={`/jobs?q=${encodeURIComponent(tag)}`} className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:text-white transition-colors">
-                  {tag}
-                </Link>
-              ))}
+          {/* For Employers */}
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-900 to-slate-950 text-white border border-slate-800 shadow-xl space-y-6 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="p-3.5 rounded-2xl bg-teal-500/20 text-teal-400 w-fit">
+                <Building2 className="w-8 h-8" />
+              </div>
+              <h3 className="text-2xl font-bold text-white">For Employers & Recruiters</h3>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Need to hire skilled talent fast? Share your staffing requirements and get matched with pre-screened professionals.
+              </p>
+              <ul className="space-y-2 text-sm text-slate-300">
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 className="w-4 h-4 text-teal-400" />
+                  <span>Pre-Screened & Skill-Verified Profiles</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle2 className="w-4 h-4 text-teal-400" />
+                  <span>Dedicated Hiring Account Manager</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <Link href="/hire-talent">
+                <Button variant="secondary" size="lg" className="w-full font-bold bg-emerald-500 hover:bg-emerald-600 text-white border-0 shadow-md">
+                  <span>Post Staffing Requirement</span>
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4. FEATURED OPPORTUNITIES */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      {/* 4. FEATURED JOBS LISTING */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-              FEATURED OPPORTUNITIES
+            <Badge variant="rec" className="uppercase tracking-widest px-3 py-1">
+              Active Opportunities
             </Badge>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mt-1">Explore Latest Openings</h2>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-2">
+              Featured Job Openings
+            </h2>
           </div>
           <Link href="/jobs">
-            <Button variant="outline" size="sm" className="border-slate-700 text-white">
-              View All Jobs →
+            <Button variant="outline" size="md" className="border-slate-300 text-slate-800 hover:bg-slate-100 font-semibold">
+              <span>View All Jobs</span>
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
         </div>
 
         {jobs.length === 0 ? (
-          <Card className="bg-slate-900 border-slate-800 p-12 text-center max-w-xl mx-auto space-y-4 shadow-2xl">
-            <Briefcase className="w-12 h-12 text-slate-500 mx-auto" />
-            <h3 className="text-xl font-bold text-white">No Jobs Available At The Moment</h3>
-            <p className="text-slate-400 text-sm">
-              Our hiring partners are updating their active requisitions. Employers can post new job openings now.
-            </p>
-            <div className="pt-2">
-              <Link href="/post-a-job">
-                <Button size="md" className="bg-emerald-600 hover:bg-emerald-500 text-white">
-                  Post a Job Opening
-                </Button>
-              </Link>
-            </div>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {jobs.map((job) => (
-              <JobCard key={job.id || job.jobId} job={job} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* 5. JOB CATEGORIES */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center space-y-3">
-          <Badge variant="secondary">JOB CATEGORIES</Badge>
-          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Hire Across Specializations</h2>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[
-            { title: "IT & Software", slug: "it-software" },
-            { title: "Sales & Business", slug: "sales" },
-            { title: "Marketing & Growth", slug: "marketing" },
-            { title: "Human Resources", slug: "hr" },
-            { title: "Finance & Accounts", slug: "finance" },
-            { title: "Operations", slug: "operations" },
-          ].map((cat, idx) => (
-            <Link key={idx} href={`/categories/${cat.slug}`}>
-              <Card className="bg-slate-900 border-slate-800 p-5 space-y-2 hover:border-emerald-500/50 transition-colors text-center">
-                <h4 className="font-bold text-white text-sm">{cat.title}</h4>
-                <span className="text-[11px] text-emerald-400 font-semibold">Explore →</span>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 6. RECRUITMENT SERVICES */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        <div className="text-center space-y-3">
-          <Badge variant="secondary">HIRING SOLUTIONS</Badge>
-          <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Recruitment Services for Employers</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-slate-900 border-slate-800 p-6 space-y-4">
-            <div className="p-3 w-fit rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <Users className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white">IT & Non-IT Recruitment</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Permanent and contract talent acquisition across software engineering, sales, marketing, operations, and finance roles.
-            </p>
-          </Card>
-
-          <Card className="bg-slate-900 border-slate-800 p-6 space-y-4">
-            <div className="p-3 w-fit rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
-              <Layers className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white">Bulk Hiring & Staffing</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Scale operations rapidly with structured bulk hiring, seasonal staffing, and volume candidate screening.
-            </p>
-          </Card>
-
-          <Card className="bg-slate-900 border-slate-800 p-6 space-y-4">
-            <div className="p-3 w-fit rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
-              <Award className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-white">Third-Party & Executive Search</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Specialized candidate sourcing, executive search, and end-to-end third-party recruitment management.
-            </p>
-          </Card>
-        </div>
-      </section>
-
-      {/* 8. FOR EMPLOYERS BANNER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-12 text-center space-y-4 shadow-2xl">
-          <h2 className="text-3xl font-extrabold text-white sm:text-4xl">Hiring for Your Company?</h2>
-          <p className="text-slate-300 text-sm max-w-xl mx-auto">
-            Post job openings directly or partner with SRYN Recruitment for dedicated candidate sourcing and screening.
-          </p>
-          <div className="pt-4 flex justify-center gap-4">
-            <Link href="/post-a-job">
-              <Button size="lg" className="bg-emerald-600 hover:bg-emerald-500 font-semibold shadow-xl shadow-emerald-600/20 text-white">
-                Post Your Job Opening Now
+          <div className="p-12 text-center rounded-3xl bg-slate-50 border border-slate-200 space-y-4">
+            <Briefcase className="w-12 h-12 mx-auto text-emerald-500/60" />
+            <p className="text-slate-600 font-medium">New job openings are currently being updated by hiring managers.</p>
+            <Link href="/candidate">
+              <Button variant="recruitment" size="md" className="font-semibold">
+                Submit Your Resume For Updates
               </Button>
             </Link>
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {jobs.map((job) => (
+              <JobCard key={job.id} job={job} />
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );

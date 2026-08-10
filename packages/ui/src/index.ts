@@ -5,4 +5,5 @@ export * from "./components/badge";
 export * from "./components/dialog";
 export * from "./components/auth-card";
 export * from "./components/form-input";
+export * from "./components/hero-slider";
 export * from "./lib/utils";
