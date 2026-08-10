@@ -26,9 +26,10 @@ export interface SlideData {
 interface HeroSliderProps {
   slides: SlideData[];
   autoPlayInterval?: number;
+  fullBleed?: boolean;
 }
 
-export function HeroSlider({ slides, autoPlayInterval = 6000 }: HeroSliderProps) {
+export function HeroSlider({ slides, autoPlayInterval = 6000, fullBleed = false }: HeroSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -52,7 +53,11 @@ export function HeroSlider({ slides, autoPlayInterval = 6000 }: HeroSliderProps)
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-3xl shadow-2xl bg-slate-950 min-h-[500px] sm:min-h-[560px] flex items-center border border-slate-800"
+      className={`relative w-full overflow-hidden bg-slate-950 flex items-center ${
+        fullBleed
+          ? "min-h-[85vh] sm:min-h-[90vh] rounded-b-3xl shadow-2xl"
+          : "rounded-3xl shadow-2xl border border-slate-800 min-h-[500px] sm:min-h-[560px]"
+      }`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -87,7 +92,11 @@ export function HeroSlider({ slides, autoPlayInterval = 6000 }: HeroSliderProps)
             />
 
             {/* Slide Content */}
-            <div className="relative z-20 max-w-5xl h-full mx-auto px-6 sm:px-12 py-16 flex flex-col justify-center text-left space-y-6">
+            <div
+              className={`relative z-20 max-w-7xl h-full mx-auto px-6 sm:px-12 flex flex-col justify-center text-left space-y-6 ${
+                fullBleed ? "pt-28 sm:pt-36 pb-16" : "py-16"
+              }`}
+            >
               <div className="inline-flex items-center space-x-2">
                 <span
                   className={`px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-slate-950/90 border ${

@@ -71,9 +71,9 @@ export default function CorporateHomePage() {
 
   return (
     <main className="space-y-20 pb-24 text-slate-900 bg-white">
-      {/* 1. HERO SLIDER SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <HeroSlider slides={corporateSlides} />
+      {/* 1. HERO SLIDER SECTION (FULL BLEED / EDGE-TO-EDGE) */}
+      <section className="w-full relative">
+        <HeroSlider slides={corporateSlides} fullBleed={true} />
       </section>
 
       {/* 2. STATS & KEY METRICS (WHITE CARDS WITH RICH ACCENTS) */}

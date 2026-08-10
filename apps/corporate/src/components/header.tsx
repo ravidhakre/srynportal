@@ -24,7 +24,7 @@ export function CorporateHeader() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-slate-900/95 backdrop-blur-md shadow-xl border-b border-slate-800/80 py-3" : "bg-transparent py-5"
+        scrolled ? "bg-slate-950/95 backdrop-blur-md shadow-2xl border-b border-slate-800/80 py-3" : "bg-gradient-to-b from-slate-950/90 via-slate-950/50 to-transparent py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -42,11 +42,11 @@ export function CorporateHeader() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
-          <Link href="/" className="hover:text-white transition-colors">
+        <nav className="hidden md:flex items-center space-x-8 text-sm font-bold text-white tracking-wide">
+          <Link href="/" className="hover:text-sryn-red transition-colors">
             HOME
           </Link>
-          <Link href="/about" className="hover:text-white transition-colors">
+          <Link href="/about" className="hover:text-sryn-red transition-colors">
             ABOUT
           </Link>
 
@@ -58,10 +58,10 @@ export function CorporateHeader() {
           >
             <Link
               href="/businesses"
-              className="flex items-center space-x-1 hover:text-white transition-colors py-2"
+              className="flex items-center space-x-1 hover:text-sryn-red transition-colors py-2"
             >
               <span>BUSINESSES</span>
-              <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-white" />
+              <ChevronDown className="w-4 h-4 text-white group-hover:text-sryn-red" />
             </Link>
 
             {businessesDropdownOpen && (
@@ -120,13 +120,13 @@ export function CorporateHeader() {
             )}
           </div>
 
-          <Link href="/services" className="hover:text-white transition-colors">
+          <Link href="/services" className="hover:text-sryn-red transition-colors">
             SERVICES
           </Link>
-          <Link href="/careers" className="hover:text-white transition-colors">
+          <Link href="/careers" className="hover:text-sryn-red transition-colors">
             CAREERS
           </Link>
-          <Link href="/contact" className="hover:text-white transition-colors">
+          <Link href="/contact" className="hover:text-sryn-red transition-colors">
             CONTACT
           </Link>
         </nav>

@@ -37,7 +37,7 @@ export default function RootLayout({
       <body className="bg-white text-slate-900 antialiased flex flex-col min-h-screen">
         <CorporateJsonLd />
         <CorporateHeader />
-        <div className="flex-1 pt-20">{children}</div>
+        <div className="flex-1">{children}</div>
         <CorporateFooter />
       </body>
     </html>
